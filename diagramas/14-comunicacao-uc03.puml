@@ -1,0 +1,18 @@
+@startuml 14-comunicacao-uc03
+title Diagrama de Comunicação - Realização do UC-03 Abrir OS
+skinparam shadowing false
+
+object ":Atendente" as A
+object ":OrdemServicoController" as C
+object ":OrdemServicoService" as S
+object ":VeiculoRepository" as VR
+object ":OrdemServicoRepository" as OR
+object "os:OrdemDeServico" as OS
+
+A -> C : 1: POST /api/os
+C -> S : 2: abrirOS(dto)
+S -> VR : 3: findByPlaca(placa)
+S -> OS : 4: new OrdemDeServico(...)
+S -> OR : 5: save(os)
+C --> A : 6: 201 Created
+@enduml

@@ -1,0 +1,18 @@
+@startuml 15-comunicacao-uc07
+title Diagrama de Comunicação - Realização do UC-07 Pagamento e Encerramento
+skinparam shadowing false
+
+object ":Atendente" as A
+object ":PagamentoController" as C
+object ":PagamentoService" as S
+object ":GatewayPagamentoClient" as G
+object "os:OrdemDeServico" as OS
+object ":PagamentoRepository" as PR
+
+A -> C : 1: POST /api/os/{id}/pagamentos
+C -> S : 2: registrarPagamento(idOS, dto)
+S -> G : 3: autorizarTransacao(valor, forma)
+S -> PR : 4: save(pagamento)
+S -> OS : 5: encerrar()
+C --> A : 6: 200 OK (comprovante)
+@enduml

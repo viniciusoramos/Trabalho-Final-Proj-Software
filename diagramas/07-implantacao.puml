@@ -1,0 +1,33 @@
+@startuml 07-implantacao
+title Diagrama de Implantação - SGOM
+skinparam shadowing false
+
+node "Dispositivo do Usuário" <<device>> {
+  node "Navegador Web" {
+    artifact "SPA React (build estático)" as spa
+  }
+}
+
+node "Servidor Cloud - VPS" <<server>> {
+  node "Docker Engine" {
+    node "Container: nginx" {
+      artifact "Arquivos estáticos do front-end" as st
+    }
+    node "Container: backend-sgom" {
+      artifact "sgom-api.jar\n(Spring Boot 3 / JRE 21)" as jar
+    }
+    node "Container: postgres-sgom" {
+      database "PostgreSQL 16" as db
+    }
+  }
+}
+
+cloud "Provedor Externo" {
+  node "Gateway de Pagamento" as gw
+}
+
+spa --> st : HTTPS (carregamento inicial)
+spa --> jar : HTTPS / REST (porta 8080)
+jar --> db : JDBC (porta 5432)
+jar --> gw : HTTPS / API
+@enduml

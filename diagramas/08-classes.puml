@@ -1,0 +1,147 @@
+@startuml 08-classes
+title Diagrama de Classes - SGOM
+skinparam shadowing false
+skinparam classAttributeIconSize 0
+hide circle
+
+class Cliente {
+  -id: Long
+  -nome: String
+  -cpfCnpj: String
+  -telefone: String
+  -email: String
+  +cadastrar()
+  +atualizar()
+}
+
+class Veiculo {
+  -id: Long
+  -placa: String
+  -marca: String
+  -modelo: String
+  -ano: int
+  -quilometragem: int
+}
+
+class Agendamento {
+  -id: Long
+  -dataHora: LocalDateTime
+  -motivo: String
+  -status: StatusAgendamento
+  +confirmar()
+  +cancelar()
+}
+
+class OrdemDeServico {
+  -id: Long
+  -numero: String
+  -dataAbertura: LocalDateTime
+  -relatoProblema: String
+  -checklistEntrada: String
+  -status: StatusOS
+  -valorTotal: BigDecimal
+  +abrir()
+  +calcularTotal()
+  +mudarStatus(novo: StatusOS)
+  +encerrar()
+}
+
+class Orcamento {
+  -id: Long
+  -dataEmissao: LocalDate
+  -validade: LocalDate
+  -valorTotal: BigDecimal
+  -aprovado: Boolean
+  +aprovar()
+  +recusar()
+}
+
+class ItemServico {
+  -id: Long
+  -horasEstimadas: BigDecimal
+  -valorUnitario: BigDecimal
+  +subtotal(): BigDecimal
+}
+
+class ItemPeca {
+  -id: Long
+  -quantidade: int
+  -valorUnitario: BigDecimal
+  +subtotal(): BigDecimal
+}
+
+class Servico {
+  -id: Long
+  -codigo: String
+  -descricao: String
+  -valorHora: BigDecimal
+}
+
+class Peca {
+  -id: Long
+  -codigo: String
+  -descricao: String
+  -fabricante: String
+  -precoVenda: BigDecimal
+  -quantidadeEstoque: int
+  -estoqueMinimo: int
+  +baixarEstoque(qtd: int)
+  +reporEstoque(qtd: int)
+}
+
+class MovimentacaoEstoque {
+  -id: Long
+  -tipo: TipoMovimentacao
+  -quantidade: int
+  -dataHora: LocalDateTime
+}
+
+class Pagamento {
+  -id: Long
+  -formaPagamento: FormaPagamento
+  -valor: BigDecimal
+  -codAutorizacao: String
+  -dataHora: LocalDateTime
+  +autorizar()
+}
+
+class Funcionario {
+  -id: Long
+  -nome: String
+  -matricula: String
+  -cargo: Cargo
+}
+
+enum StatusOS {
+  ABERTA
+  EM_DIAGNOSTICO
+  AGUARDANDO_APROVACAO
+  APROVADA
+  EM_EXECUCAO
+  AGUARDANDO_PECA
+  FINALIZADA
+  ENTREGUE
+  CANCELADA
+}
+
+enum Cargo {
+  ATENDENTE
+  MECANICO
+  GERENTE
+}
+
+Cliente "1" -- "1..*" Veiculo : possui >
+Cliente "1" -- "0..*" Agendamento : solicita >
+Veiculo "1" -- "0..*" OrdemDeServico : gera >
+Agendamento "0..1" -- "0..1" OrdemDeServico : origina >
+OrdemDeServico "1" -- "0..1" Orcamento : possui >
+OrdemDeServico "1" *-- "0..*" ItemServico
+OrdemDeServico "1" *-- "0..*" ItemPeca
+ItemServico "0..*" -- "1" Servico : refere >
+ItemPeca "0..*" -- "1" Peca : refere >
+Peca "1" -- "0..*" MovimentacaoEstoque : registra >
+OrdemDeServico "1" -- "0..*" Pagamento : quitada por >
+Funcionario "1" -- "0..*" OrdemDeServico : responsável >
+OrdemDeServico ..> StatusOS
+Funcionario ..> Cargo
+@enduml

@@ -1,0 +1,19 @@
+@startuml 12-estados-os
+title Diagrama de Estados - Ordem de Serviço
+skinparam shadowing false
+
+[*] --> Aberta : abrirOS()
+Aberta --> EmDiagnostico : iniciarDiagnostico()
+EmDiagnostico --> AguardandoAprovacao : finalizarOrcamento()
+AguardandoAprovacao --> Aprovada : aprovarOrcamento()
+AguardandoAprovacao --> Cancelada : recusarOrcamento()
+Aprovada --> EmExecucao : iniciarExecucao()
+EmExecucao --> AguardandoPeca : peçaIndisponível
+AguardandoPeca --> EmExecucao : peçaRecebida
+EmExecucao --> Finalizada : concluirServicos()
+Finalizada --> Entregue : registrarPagamento()\n[pagamento autorizado]
+Aberta --> Cancelada : cancelarOS()
+EmDiagnostico --> Cancelada : cancelarOS()
+Entregue --> [*]
+Cancelada --> [*]
+@enduml

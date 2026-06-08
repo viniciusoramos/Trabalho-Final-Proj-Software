@@ -1,0 +1,40 @@
+@startuml 01-casos-de-uso
+title Diagrama de Casos de Uso - SGOM
+left to right direction
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+actor "Cliente" as cliente
+actor "Atendente" as atendente
+actor "Mecânico" as mecanico
+actor "Gerente" as gerente
+actor "Gateway de\nPagamento" as gateway
+
+rectangle "SGOM - Sistema de Gestão de Oficina Mecânica" {
+  usecase "UC-01\nManter Cliente e Veículo" as UC01
+  usecase "UC-02\nAgendar Atendimento" as UC02
+  usecase "UC-03\nAbrir Ordem de Serviço" as UC03
+  usecase "UC-04\nElaborar Orçamento" as UC04
+  usecase "UC-05\nAprovar Orçamento" as UC05
+  usecase "UC-06\nExecutar Serviços e\nRegistrar Peças" as UC06
+  usecase "UC-07\nRegistrar Pagamento e\nEncerrar OS" as UC07
+  usecase "UC-08\nGerenciar Estoque de Peças" as UC08
+  usecase "UC-09\nEmitir Relatórios Gerenciais" as UC09
+}
+
+atendente --> UC01
+atendente --> UC02
+cliente --> UC02
+atendente --> UC03
+mecanico --> UC04
+cliente --> UC05
+atendente --> UC05
+mecanico --> UC06
+atendente --> UC07
+gerente --> UC08
+gerente --> UC09
+UC07 --> gateway
+UC03 ..> UC01 : <<include>>
+UC06 ..> UC08 : <<include>>
+UC04 ..> UC05 : <<extend>>
+@enduml

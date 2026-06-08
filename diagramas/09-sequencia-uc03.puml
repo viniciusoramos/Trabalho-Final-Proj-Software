@@ -1,0 +1,21 @@
+@startuml 09-sequencia-uc03
+title Diagrama de Sequência (Projeto) - Realização do UC-03 Abrir OS
+skinparam shadowing false
+actor ":Atendente" as A
+participant ":OrdemServicoController" as C
+participant ":OrdemServicoService" as S
+participant ":VeiculoRepository" as VR
+participant ":OrdemServicoRepository" as OR
+participant "os:OrdemDeServico" as OS
+
+A -> C : POST /api/os {placa, relato, checklist}
+C -> S : abrirOS(dto)
+S -> VR : findByPlaca(placa)
+VR --> S : veiculo
+S -> OS : new OrdemDeServico(veiculo, relato, checklist)
+OS --> S : os [status = ABERTA]
+S -> OR : save(os)
+OR --> S : os persistida (id, numero)
+S --> C : OrdemServicoResponseDTO
+C --> A : 201 Created (numero da OS)
+@enduml

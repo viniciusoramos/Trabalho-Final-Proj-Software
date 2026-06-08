@@ -1,0 +1,31 @@
+@startuml 05-arquitetura
+title Arquitetura em Camadas - SGOM
+skinparam shadowing false
+skinparam componentStyle uml2
+
+node "Navegador do Usuário" {
+  [SPA React 18 + TypeScript\n(Vite, Tailwind CSS)] as front
+}
+
+node "Servidor de Aplicação" {
+  package "API REST - Spring Boot 3 (Java 21)" {
+    [Camada de Apresentação\n(Controllers REST)] as ctrl
+    [Camada de Aplicação\n(Services / Regras de Negócio)] as serv
+    [Camada de Persistência\n(Repositories - Spring Data JPA)] as repo
+    [Segurança\n(Spring Security + JWT)] as sec
+  }
+}
+
+database "PostgreSQL 16" as db
+
+cloud "Serviços Externos" {
+  [Gateway de Pagamento] as gw
+}
+
+front --> ctrl : HTTPS / JSON
+ctrl --> serv
+serv --> repo
+repo --> db : JDBC
+serv --> gw : HTTPS / API REST
+sec ..> ctrl : intercepta requisições
+@enduml

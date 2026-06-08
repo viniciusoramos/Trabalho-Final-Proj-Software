@@ -1,0 +1,15 @@
+@startuml 03-dss-uc04
+title DSS - UC-04 Elaborar Orçamento
+skinparam shadowing false
+actor ":Mecânico" as M
+participant ":Sistema SGOM" as S
+
+M -> S : selecionarOS(numeroOS)
+S --> M : dados da OS e relato do problema
+M -> S : adicionarServico(codServico, horasEstimadas)
+S --> M : item de serviço adicionado, subtotal
+M -> S : adicionarPeca(codPeca, quantidade)
+S --> M : disponibilidade em estoque, subtotal
+M -> S : finalizarOrcamento()
+S --> M : orçamento gerado (valorTotal, validade,\nstatus OS = AGUARDANDO_APROVACAO)
+@enduml

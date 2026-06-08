@@ -1,0 +1,16 @@
+@startuml 04-dss-uc07
+title DSS - UC-07 Registrar Pagamento e Encerrar OS
+skinparam shadowing false
+actor ":Atendente" as A
+participant ":Sistema SGOM" as S
+participant ":Gateway de Pagamento" as G
+
+A -> S : selecionarOS(numeroOS)
+S --> A : resumo da OS (serviços, peças, valorTotal)
+A -> S : registrarPagamento(formaPagamento, valor)
+S -> G : autorizarTransacao(valor, formaPagamento)
+G --> S : transação autorizada (codAutorizacao)
+S --> A : pagamento confirmado
+A -> S : encerrarOS()
+S --> A : OS encerrada (status = ENTREGUE),\ncomprovante emitido
+@enduml

@@ -1,0 +1,24 @@
+@startuml 10-sequencia-uc04
+title Diagrama de Sequência (Projeto) - Realização do UC-04 Elaborar Orçamento
+skinparam shadowing false
+actor ":Mecânico" as M
+participant ":OrcamentoController" as C
+participant ":OrcamentoService" as S
+participant ":PecaRepository" as PR
+participant "os:OrdemDeServico" as OS
+participant "orc:Orcamento" as O
+
+M -> C : POST /api/os/{id}/orcamento {itens}
+C -> S : elaborarOrcamento(idOS, itensDTO)
+loop para cada peça do orçamento
+  S -> PR : findByCodigo(codPeca)
+  PR --> S : peca (quantidadeEstoque)
+end
+S -> O : new Orcamento(itens)
+O --> S : orc
+S -> O : calcularValorTotal()
+O --> S : valorTotal
+S -> OS : mudarStatus(AGUARDANDO_APROVACAO)
+S --> C : OrcamentoResponseDTO
+C --> M : 201 Created (valorTotal, validade)
+@enduml

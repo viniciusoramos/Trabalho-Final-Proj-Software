@@ -1,0 +1,15 @@
+@startuml 02-dss-uc03
+title DSS - UC-03 Abrir Ordem de Serviço
+skinparam shadowing false
+actor ":Atendente" as A
+participant ":Sistema SGOM" as S
+
+A -> S : iniciarAberturaOS(placa)
+S --> A : dados do veículo e do cliente
+A -> S : informarRelatoProblema(descricao)
+S --> A : confirmação do relato
+A -> S : registrarChecklistEntrada(itens)
+S --> A : checklist registrado
+A -> S : confirmarAberturaOS()
+S --> A : OS criada (numero, status = ABERTA)
+@enduml

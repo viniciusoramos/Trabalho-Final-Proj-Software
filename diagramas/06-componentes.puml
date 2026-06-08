@@ -1,0 +1,56 @@
+@startuml 06-componentes
+title Diagrama de Componentes - SGOM
+skinparam shadowing false
+skinparam componentStyle uml2
+
+package "Front-end (React + TypeScript)" {
+  [UI Atendimento] as uiat
+  [UI Oficina] as uiof
+  [UI Estoque e Relatórios] as uies
+  [Cliente HTTP (Axios)] as axios
+}
+
+package "Back-end (Spring Boot 3)" {
+  [ClienteController] as cc
+  [OrdemServicoController] as oc
+  [OrcamentoController] as orc
+  [EstoqueController] as ec
+  [PagamentoController] as pc
+
+  [ClienteService] as cs
+  [OrdemServicoService] as os
+  [OrcamentoService] as ors
+  [EstoqueService] as es
+  [PagamentoService] as ps
+
+  [Repositories\n(Spring Data JPA)] as rep
+  [Integração Gateway\nde Pagamento] as ig
+}
+
+database "PostgreSQL 16" as db
+[Gateway de Pagamento\n(externo)] as gwx
+
+uiat --> axios
+uiof --> axios
+uies --> axios
+axios --> cc : REST/JSON
+axios --> oc : REST/JSON
+axios --> orc : REST/JSON
+axios --> ec : REST/JSON
+axios --> pc : REST/JSON
+
+cc --> cs
+oc --> os
+orc --> ors
+ec --> es
+pc --> ps
+
+cs --> rep
+os --> rep
+ors --> rep
+es --> rep
+ps --> rep
+ps --> ig
+ig --> gwx : HTTPS
+rep --> db : JDBC
+@enduml

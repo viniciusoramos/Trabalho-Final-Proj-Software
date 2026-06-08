@@ -1,0 +1,14 @@
+@startuml 13-estados-agendamento
+title Diagrama de Estados - Agendamento
+skinparam shadowing false
+
+[*] --> Solicitado : criarAgendamento()
+Solicitado --> Confirmado : confirmar()
+Solicitado --> Cancelado : cancelar()
+Confirmado --> Atendido : clienteCompareceu()\n/ abrirOS()
+Confirmado --> NaoCompareceu : prazoExpirado
+Confirmado --> Cancelado : cancelar()
+Atendido --> [*]
+Cancelado --> [*]
+NaoCompareceu --> [*]
+@enduml

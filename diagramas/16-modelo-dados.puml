@@ -1,0 +1,138 @@
+@startuml 16-modelo-dados
+title Modelo de Dados (DER) - SGOM
+skinparam shadowing false
+hide circle
+hide methods
+
+entity "cliente" as cliente {
+  *id : BIGSERIAL <<PK>>
+  --
+  nome : VARCHAR(120)
+  cpf_cnpj : VARCHAR(18) <<UNIQUE>>
+  telefone : VARCHAR(20)
+  email : VARCHAR(120)
+}
+
+entity "veiculo" as veiculo {
+  *id : BIGSERIAL <<PK>>
+  --
+  cliente_id : BIGINT <<FK>>
+  placa : VARCHAR(8) <<UNIQUE>>
+  marca : VARCHAR(60)
+  modelo : VARCHAR(60)
+  ano : INT
+  quilometragem : INT
+}
+
+entity "agendamento" as agendamento {
+  *id : BIGSERIAL <<PK>>
+  --
+  cliente_id : BIGINT <<FK>>
+  veiculo_id : BIGINT <<FK>>
+  data_hora : TIMESTAMP
+  motivo : TEXT
+  status : VARCHAR(20)
+}
+
+entity "ordem_servico" as os {
+  *id : BIGSERIAL <<PK>>
+  --
+  numero : VARCHAR(12) <<UNIQUE>>
+  veiculo_id : BIGINT <<FK>>
+  funcionario_id : BIGINT <<FK>>
+  agendamento_id : BIGINT <<FK,NULL>>
+  data_abertura : TIMESTAMP
+  relato_problema : TEXT
+  checklist_entrada : TEXT
+  status : VARCHAR(25)
+  valor_total : NUMERIC(10,2)
+}
+
+entity "orcamento" as orc {
+  *id : BIGSERIAL <<PK>>
+  --
+  ordem_servico_id : BIGINT <<FK,UNIQUE>>
+  data_emissao : DATE
+  validade : DATE
+  valor_total : NUMERIC(10,2)
+  aprovado : BOOLEAN
+}
+
+entity "servico" as serv {
+  *id : BIGSERIAL <<PK>>
+  --
+  codigo : VARCHAR(10) <<UNIQUE>>
+  descricao : VARCHAR(160)
+  valor_hora : NUMERIC(10,2)
+}
+
+entity "peca" as peca {
+  *id : BIGSERIAL <<PK>>
+  --
+  codigo : VARCHAR(20) <<UNIQUE>>
+  descricao : VARCHAR(160)
+  fabricante : VARCHAR(80)
+  preco_venda : NUMERIC(10,2)
+  qtd_estoque : INT
+  estoque_minimo : INT
+}
+
+entity "item_servico" as itemserv {
+  *id : BIGSERIAL <<PK>>
+  --
+  ordem_servico_id : BIGINT <<FK>>
+  servico_id : BIGINT <<FK>>
+  horas_estimadas : NUMERIC(5,2)
+  valor_unitario : NUMERIC(10,2)
+}
+
+entity "item_peca" as itempeca {
+  *id : BIGSERIAL <<PK>>
+  --
+  ordem_servico_id : BIGINT <<FK>>
+  peca_id : BIGINT <<FK>>
+  quantidade : INT
+  valor_unitario : NUMERIC(10,2)
+}
+
+entity "movimentacao_estoque" as mov {
+  *id : BIGSERIAL <<PK>>
+  --
+  peca_id : BIGINT <<FK>>
+  tipo : VARCHAR(10)
+  quantidade : INT
+  data_hora : TIMESTAMP
+}
+
+entity "pagamento" as pag {
+  *id : BIGSERIAL <<PK>>
+  --
+  ordem_servico_id : BIGINT <<FK>>
+  forma_pagamento : VARCHAR(20)
+  valor : NUMERIC(10,2)
+  cod_autorizacao : VARCHAR(40)
+  data_hora : TIMESTAMP
+}
+
+entity "funcionario" as func {
+  *id : BIGSERIAL <<PK>>
+  --
+  nome : VARCHAR(120)
+  matricula : VARCHAR(10) <<UNIQUE>>
+  cargo : VARCHAR(15)
+}
+
+cliente ||--{ veiculo
+cliente ||--{ agendamento
+veiculo ||--{ agendamento
+veiculo ||--{ os
+func ||--{ os
+agendamento |o--o| os
+os ||--o| orc
+os ||--{ itemserv
+serv ||--{ itemserv
+os ||--{ itempeca
+peca ||--{ itempeca
+peca ||--{ mov
+os ||--{ pag
+@enduml

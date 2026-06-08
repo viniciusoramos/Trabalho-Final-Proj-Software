@@ -1,0 +1,21 @@
+@startuml 11-sequencia-uc07
+title Diagrama de Sequência (Projeto) - Realização do UC-07 Pagamento e Encerramento
+skinparam shadowing false
+actor ":Atendente" as A
+participant ":PagamentoController" as C
+participant ":PagamentoService" as S
+participant ":GatewayPagamentoClient" as G
+participant "os:OrdemDeServico" as OS
+participant ":PagamentoRepository" as PR
+
+A -> C : POST /api/os/{id}/pagamentos {forma, valor}
+C -> S : registrarPagamento(idOS, dto)
+S -> G : autorizarTransacao(valor, forma)
+G --> S : codAutorizacao
+S -> PR : save(pagamento)
+PR --> S : pagamento persistido
+S -> OS : encerrar()
+OS --> S : status = ENTREGUE
+S --> C : PagamentoResponseDTO
+C --> A : 200 OK (comprovante)
+@enduml
